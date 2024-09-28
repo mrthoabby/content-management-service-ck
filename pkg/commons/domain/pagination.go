@@ -1,6 +1,6 @@
-package commons
+package coredomain
 
 type Pagination struct {
-	Page  int
-	Limit int
+	CurrentPage int
+	Limit       int
 }
