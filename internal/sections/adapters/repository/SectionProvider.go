@@ -75,10 +75,17 @@ type SectionProvider struct {
 	*mongo.Collection
 }
 
+const (
+	sectionIdProperty   = "id"
+	sectionNameProperty = "name"
+
+	pageIdProperty = "id"
+)
+
 func (s *SectionProvider) FetchSectionByIDAsync(context context.Context, sectionId models.SectionID) (*models.Section, error) {
 	var section *models.Section
 
-	filter := bson.D{{Key: "id", Value: sectionId}}
+	filter := bson.D{{Key: sectionIdProperty, Value: sectionId}}
 	errorFinding := s.Collection.FindOne(context, filter).Decode(section)
 	if errorFinding != nil {
 		if errorFinding == mongo.ErrNoDocuments {
@@ -90,12 +97,32 @@ func (s *SectionProvider) FetchSectionByIDAsync(context context.Context, section
 	return section, nil
 }
 
-func (s *SectionProvider) FetchPartialSectionByIDAsync(_ context.Context, _ models.SectionID) (*models.PartialSection, error) {
-	panic("not implemented") // TODO: Implement
+func (s *SectionProvider) FetchPartialSectionByIDAsync(context context.Context, sectionId models.SectionID) (*models.PartialSection, error) {
+	var section *models.PartialSection
+
+	filter := bson.D{{Key: sectionIdProperty, Value: sectionId}}
+
+	projection := bson.D{
+		{Key: sectionIdProperty, Value: 1},
+		{Key: sectionNameProperty, Value: 1},
+	}
+
+	opts := options.FindOne().SetProjection(projection)
+
+	errorFinding := s.Collection.FindOne(context, filter, opts).Decode(section)
+	if errorFinding != nil {
+		if errorFinding == mongo.ErrNoDocuments {
+			return nil, errortypes.NewNotFoundError("Section not found")
+		}
+		return nil, errorFinding
+	}
+
+	return section, nil
+
 }
 
-func (s *SectionProvider) FetchPaginatedPartialSectionsAsync(_ context.Context, _ coredomain.Pagination) ([]models.PartialSection, error) {
-	panic("not implemented") // TODO: Implement
+func (s *SectionProvider) FetchPaginatedPartialSectionsAsync(context context.Context, pagination coredomain.Pagination) ([]models.PartialSection, error) {
+
 }
 
 func (s *SectionProvider) FetchSectionPageContentBySectionPageIDAsync(_ context.Context, _ models.SectionPageID) (*models.PageContent, error) {
