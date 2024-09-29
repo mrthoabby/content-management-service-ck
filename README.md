@@ -32,9 +32,7 @@ Se implementarán pruebas unitarias y de integración para garantizar la funcion
 - [ ] **Obtener todas las secciones y sus páginas**
   - Endpoint: `GET /sections`
   - **Tareas**:
-    - [ ] Implementar la lógica para listar todas las secciones en el servicio de dominio.
-    - [ ] Implementar la lógica para listar las páginas de cada sección.
-    - [ ] Crear el controlador para manejar la solicitud y formatear la respuesta.
+    - [ ] Implementar la lógica para listar todas las secciones parciales de forma paginada
 
 - [ ] **Obtener el contenido de una página específica**
   - Endpoint: `GET /sections/{sectionId}/pages/{pageId}`
