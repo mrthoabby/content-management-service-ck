@@ -22,6 +22,7 @@ func (r *SectionRouter) InitialiceSectionRouter(middlewares ...*mux.MiddlewareFu
 	mainPath := r.PathPrefix("/api/v1/sections").Subrouter()
 
 	mainPath.HandleFunc("/{section_id}", r.GetSectionByID).Methods(http.MethodGet)
+	mainPath.HandleFunc("", r.GetAllSections).Methods(http.MethodGet)
 }
 
 func NewSectionRouter(sectionHandler ports.SectionHandler, router *mux.Router) *SectionRouter {

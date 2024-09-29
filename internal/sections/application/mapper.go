@@ -31,3 +31,13 @@ func MapPagesToPagesDTO(pages []models.Page) []dto.PageDTO {
 
 	return pagesDTO
 }
+
+func MapSectionsToSectionDTO(sections []models.Section) []dto.SectionDTO {
+	var sectionsDTO []dto.SectionDTO
+
+	for _, section := range sections {
+		sectionsDTO = append(sectionsDTO, MapSectionToSectionDTO(section))
+	}
+
+	return sectionsDTO
+}

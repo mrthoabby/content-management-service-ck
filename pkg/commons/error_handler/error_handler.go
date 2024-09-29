@@ -54,9 +54,15 @@ func buildHandledCommonError(common Commons) HandledError {
 
 func GetHanledError(err any) HandledError {
 	handled, isHandled := err.(HandledError)
+	common, isCommon := err.(Commons)
 	if isHandled {
 		return handled
 	}
+
+	if isCommon {
+		return buildHandledCommonError(common)
+	}
+
 	logrus.Error(err)
 	return HandledError{
 		Error: "unexpected unknown error",

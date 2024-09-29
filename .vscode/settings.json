@@ -5,6 +5,7 @@
         "logrus",
         "mongodb",
         "mrthoabby",
+        "numbersutil",
         "requestdto",
         "valueobjets"
     ]
