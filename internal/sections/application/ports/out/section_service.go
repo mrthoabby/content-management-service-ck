@@ -5,12 +5,13 @@ import (
 
 	"github.com/mrthoabby/content-management-service-ck/internal/sections/application/dto"
 	"github.com/mrthoabby/content-management-service-ck/internal/sections/application/types"
+	coredomain "github.com/mrthoabby/content-management-service-ck/pkg/commons/domain"
 )
 
 type SectionService interface {
 	GetSectionByID(context context.Context, params types.GetSectionByIDParams) dto.SectionDTO
-	// GetPartialSectionByID(string) (models.PartialSection, )
-	// GetPaginatedPartialSections(coredomain.Pagination) []models.PartialSection
+	GetAllSections(context context.Context, params types.GetAllSectionsParams) coredomain.PaginatedResult[[]dto.SectionDTO]
+
 	// GetSectionPageContentBySectionIDAndPageID(models.SectionPageID) models.PageContent
 	// GetPartialSectionsByQueryPaginated(string) []models.PartialSection
 

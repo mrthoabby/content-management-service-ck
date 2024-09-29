@@ -79,7 +79,8 @@ const (
 	sectionIdProperty   = "id"
 	sectionNameProperty = "name"
 
-	pageIdProperty = "id"
+	pageIdProperty      = "id"
+	pageContentProperty = "pages.content"
 )
 
 func (s *SectionProvider) FetchSectionByIDAsync(context context.Context, sectionId models.SectionID) (*models.Section, error) {
@@ -121,8 +122,102 @@ func (s *SectionProvider) FetchPartialSectionByIDAsync(context context.Context, 
 
 }
 
-func (s *SectionProvider) FetchPaginatedPartialSectionsAsync(context context.Context, pagination coredomain.Pagination) ([]models.PartialSection, error) {
+func (s *SectionProvider) FetchAllSectionsAsync(context context.Context, pagination coredomain.Pagination) (coredomain.PaginatedResult[[]models.Section], error) {
 
+	sections := make([]models.Section, 0)
+	paginationResult := coredomain.PaginatedResult[[]models.Section]{
+		CurrentPage: pagination.CurrentPage,
+		Data:        sections,
+		GroupedBy:   pagination.GroupBy,
+		CountTotal:  0,
+		TotalPages:  0,
+	}
+
+	skip := (pagination.CurrentPage - 1) * pagination.GroupBy
+
+	opts := options.Find().SetSkip(int64(skip)).SetLimit(int64(pagination.GroupBy))
+
+	cursor, errorFinding := s.Collection.Find(context, bson.D{}, opts)
+	if errorFinding != nil {
+		if errorFinding == mongo.ErrNoDocuments {
+			return paginationResult, nil
+		}
+		return paginationResult, errorFinding
+	}
+	defer cursor.Close(context)
+
+	if errorDecoding := cursor.All(context, &sections); errorDecoding != nil {
+		return paginationResult, errorDecoding
+	}
+
+	totalDocs, errorCountingDocument := s.Collection.CountDocuments(context, bson.D{})
+	if errorCountingDocument != nil {
+		return paginationResult, errorCountingDocument
+	}
+
+	totalGroups := int(totalDocs) / pagination.GroupBy
+	if totalDocs%int64(pagination.GroupBy) != 0 {
+		totalGroups++
+	}
+
+	return coredomain.PaginatedResult[[]models.Section]{
+		CurrentPage: pagination.CurrentPage,
+		Data:        sections,
+		GroupedBy:   pagination.GroupBy,
+		CountTotal:  int(totalDocs),
+		TotalPages:  totalGroups,
+	}, nil
+}
+
+func (s *SectionProvider) FetchAllPartialSectionsAsync(context context.Context, pagination coredomain.Pagination) (coredomain.PaginatedResult[[]models.PartialSection], error) {
+
+	sections := make([]models.PartialSection, 0)
+	paginationResult := coredomain.PaginatedResult[[]models.PartialSection]{
+		CurrentPage: pagination.CurrentPage,
+		Data:        sections,
+		GroupedBy:   pagination.GroupBy,
+		CountTotal:  0,
+		TotalPages:  0,
+	}
+
+	skip := (pagination.CurrentPage - 1) * pagination.GroupBy
+
+	projection := bson.D{
+		{Key: pageContentProperty, Value: 0},
+	}
+
+	opts := options.Find().SetProjection(projection).SetSkip(int64(skip)).SetLimit(int64(pagination.GroupBy))
+
+	cursor, errorFinding := s.Collection.Find(context, bson.D{}, opts)
+	if errorFinding != nil {
+		if errorFinding == mongo.ErrNoDocuments {
+			return paginationResult, nil
+		}
+		return paginationResult, errorFinding
+	}
+	defer cursor.Close(context)
+
+	if errorDecoding := cursor.All(context, &sections); errorDecoding != nil {
+		return paginationResult, errorDecoding
+	}
+
+	totalDocs, errorCountingDocument := s.Collection.CountDocuments(context, bson.D{})
+	if errorCountingDocument != nil {
+		return paginationResult, errorCountingDocument
+	}
+
+	totalGroups := int(totalDocs) / pagination.GroupBy
+	if totalDocs%int64(pagination.GroupBy) != 0 {
+		totalGroups++
+	}
+
+	return coredomain.PaginatedResult[[]models.PartialSection]{
+		CurrentPage: pagination.CurrentPage,
+		Data:        sections,
+		GroupedBy:   pagination.GroupBy,
+		CountTotal:  int(totalDocs),
+		TotalPages:  totalGroups,
+	}, nil
 }
 
 func (s *SectionProvider) FetchSectionPageContentBySectionPageIDAsync(_ context.Context, _ models.SectionPageID) (*models.PageContent, error) {

@@ -27,8 +27,9 @@ func (s SectionName) Validate() errorhandler.Commons {
 }
 
 type PartialSection struct {
-	ID   SectionID
-	Name SectionName
+	ID    SectionID
+	Name  SectionName
+	Pages []PageIDName
 }
 
 type Section struct {
