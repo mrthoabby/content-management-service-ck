@@ -1,6 +1,11 @@
 {
     "cSpell.words": [
+        "bson",
         "Cirosky",
-        "mrthoabby"
+        "logrus",
+        "mongodb",
+        "mrthoabby",
+        "requestdto",
+        "valueobjets"
     ]
 }

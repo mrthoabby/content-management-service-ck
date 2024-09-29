@@ -3,10 +3,11 @@ package errortypes
 import errorhandler "github.com/mrthoabby/content-management-service-ck/pkg/commons/error_handler"
 
 type DomainError struct {
+	error
 	message string
 }
 
-func (e DomainError) GetMessage() string {
+func (e DomainError) Error() string {
 	return e.message
 }
 

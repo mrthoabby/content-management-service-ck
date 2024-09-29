@@ -1,25 +1,33 @@
 package usecases
 
 import (
+	"context"
+
+	"github.com/mrthoabby/content-management-service-ck/internal/sections/application/types"
 	"github.com/mrthoabby/content-management-service-ck/internal/sections/domain/models"
 	"github.com/mrthoabby/content-management-service-ck/internal/sections/domain/ports"
-	valueobjects "github.com/mrthoabby/content-management-service-ck/internal/sections/domain/value_objects"
-	"github.com/mrthoabby/content-management-service-ck/pkg/commons/errorhandler"
+	errorhandler "github.com/mrthoabby/content-management-service-ck/pkg/commons/error_handler"
 )
+
+func NewGetSectionById(sectionProvide ports.SectionProvider) *GetSectionById {
+	return &GetSectionById{
+		sectionProvide: sectionProvide,
+	}
+}
 
 type GetSectionById struct {
 	sectionProvide ports.SectionProvider
 }
 
-func (g *GetSectionById) Execute(params valueobjects.GetSectionByIDParams) models.Section {
+func (g *GetSectionById) Execute(context context.Context, params types.GetSectionByIDParams) models.Section {
 	if params.LoadPages {
-		secion, errorGettingSection := g.sectionProvide.FetchSectionByIDAsync(params.SectionID)
+		secion, errorGettingSection := g.sectionProvide.FetchSectionByIDAsync(context, models.SectionID(params.SectionID))
 		errorhandler.Handle(errorGettingSection)
 
-		return secion
+		return *secion
 	}
 
-	section, errorGettingSection := g.sectionProvide.FetchPartialSectionByIDAsync(params.SectionID)
+	section, errorGettingSection := g.sectionProvide.FetchPartialSectionByIDAsync(context, models.SectionID(params.SectionID))
 	errorhandler.Handle(errorGettingSection)
 
 	return models.Section{
