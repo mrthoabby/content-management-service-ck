@@ -11,23 +11,23 @@ import (
 
 func NewGetSectionById(sectionProvide ports.SectionProvider) *GetSectionById {
 	return &GetSectionById{
-		sectionProvide: sectionProvide,
+		SectionProvider: sectionProvide,
 	}
 }
 
 type GetSectionById struct {
-	sectionProvide ports.SectionProvider
+	ports.SectionProvider
 }
 
 func (g *GetSectionById) Execute(context context.Context, params types.GetSectionByIDParams) models.Section {
 	if params.LoadPages {
-		secion, errorGettingSection := g.sectionProvide.FetchSectionByIDAsync(context, models.SectionID(params.SectionID))
+		secion, errorGettingSection := g.FetchSectionByIDAsync(context, models.SectionID(params.SectionID))
 		errorhandler.Handle(errorGettingSection)
 
 		return *secion
 	}
 
-	section, errorGettingSection := g.sectionProvide.FetchPartialSectionByIDAsync(context, models.SectionID(params.SectionID))
+	section, errorGettingSection := g.FetchPartialSectionByIDAsync(context, models.SectionID(params.SectionID))
 	errorhandler.Handle(errorGettingSection)
 
 	return models.Section{
