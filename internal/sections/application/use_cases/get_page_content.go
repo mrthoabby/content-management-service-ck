@@ -24,7 +24,7 @@ func (g *GetPageContent) Execute(context context.Context, params types.GetPageCo
 		SectionID: models.SectionID(params.SectionID),
 		PageID:    models.PageID(params.PageID),
 	})
-	errorhandler.Handle(errorGettingContent)
+	errorhandler.Handle(errorGettingContent, g, "error getting page content", "usecase.get_page_content")
 
 	return *content
 }

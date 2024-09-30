@@ -58,3 +58,8 @@ type SectionPageIDName struct {
 	SectionID   SectionID
 	SectionName SectionName
 }
+
+type SectionIDName struct {
+	SectionID   SectionID
+	SectionName SectionName
+}

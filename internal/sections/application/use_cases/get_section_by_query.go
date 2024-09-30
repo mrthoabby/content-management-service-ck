@@ -22,14 +22,14 @@ type GetSectionByQuery struct {
 func (g *GetSectionByQuery) Execute(context context.Context, params types.GetSectionsByQuery) []models.Section {
 	if params.LoadPages {
 		sections, errorGettingSections := g.FetchSectionsByQueryAsync(context, params.Query)
-		errorhandler.Handle(errorGettingSections)
+		errorhandler.Handle(errorGettingSections, g, "error getting sections", "usecase.get_sections_by_query")
 
 		return sections
 
 	}
 
 	partialSections, errorGettingSections := g.FetchPartialSectionsByQueryAsync(context, params.Query)
-	errorhandler.Handle(errorGettingSections)
+	errorhandler.Handle(errorGettingSections, g, "error getting partial sections", "usecase.get_sections_by_query")
 
 	sections := make([]models.Section, 0, len(partialSections))
 	for i, section := range partialSections {

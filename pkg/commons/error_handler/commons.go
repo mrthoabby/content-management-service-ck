@@ -5,6 +5,8 @@ const (
 	DomainErrorType
 	ValidationErrorType
 	ApiHandledError
+	ConflictErrorType
+	InvalidFormatErrorType
 )
 
 type Commons interface {

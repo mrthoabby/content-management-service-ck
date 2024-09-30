@@ -21,12 +21,14 @@ func (r *SectionRouter) InitialiceSectionRouter(middlewares ...*mux.MiddlewareFu
 		}
 	}
 
-	mainPath := r.PathPrefix("/api/v1/sections").Subrouter()
+	mainPath := r.PathPrefix(v1.APIMainPath).Subrouter()
 
 	mainPath.HandleFunc(fmt.Sprintf("/{%s}", v1.SectionIDParam), r.GetSectionByID).Methods(http.MethodGet)
 	mainPath.HandleFunc("", r.GetAllSections).Methods(http.MethodGet)
 	mainPath.HandleFunc(fmt.Sprintf("/{%s}/pages/{%s}", v1.SectionIDParam, v1.PageIDParam), r.GetPageContentByPageID).Methods(http.MethodGet)
 	mainPath.HandleFunc("/search", r.GetSectionsByQuery).Methods(http.MethodGet)
+
+	mainPath.HandleFunc("", r.CreateSection).Methods(http.MethodPost)
 
 }
 

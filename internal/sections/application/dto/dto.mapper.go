@@ -4,8 +4,8 @@ import (
 	"github.com/mrthoabby/content-management-service-ck/internal/sections/domain/models"
 )
 
-func MapSectionToSectionDTO(section models.Section) SectionDTO {
-	return SectionDTO{
+func MapSectionToSectionDTO(section models.Section) ResponseSectionDTO {
+	return ResponseSectionDTO{
 		ID:    string(section.ID),
 		Name:  string(section.Name),
 		Pages: MapPagesToPagesDTO(section.Pages),
@@ -31,8 +31,8 @@ func MapPagesToPagesDTO(pages []models.Page) []PageDTO {
 	return pagesDTO
 }
 
-func MapSectionsToSectionDTO(sections []models.Section) []SectionDTO {
-	var sectionsDTO []SectionDTO
+func MapSectionsToSectionDTO(sections []models.Section) []ResponseSectionDTO {
+	var sectionsDTO []ResponseSectionDTO
 
 	for _, section := range sections {
 		sectionsDTO = append(sectionsDTO, MapSectionToSectionDTO(section))
