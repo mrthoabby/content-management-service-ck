@@ -11,16 +11,16 @@ import (
 
 func NewGetPageContent(sections ports.SectionProvider) *GetPageContent {
 	return &GetPageContent{
-		sections: sections,
+		SectionProvider: sections,
 	}
 }
 
 type GetPageContent struct {
-	sections ports.SectionProvider
+	ports.SectionProvider
 }
 
 func (g *GetPageContent) Execute(context context.Context, params types.GetPageContentParams) models.SectionPageIDContent {
-	content, errorGettingContent := g.sections.FetchPageContentByPageIDAsync(context, models.SectionPageID{
+	content, errorGettingContent := g.FetchPageContentByPageIDAsync(context, models.SectionPageID{
 		SectionID: models.SectionID(params.SectionID),
 		PageID:    models.PageID(params.PageID),
 	})
