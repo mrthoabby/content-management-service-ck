@@ -23,13 +23,13 @@ type GetAllSections struct {
 func (g *GetAllSections) Execute(context context.Context, params types.GetAllSectionsParams) coredomain.PaginatedResult[[]models.Section] {
 	if params.LoadPages {
 		paginatedData, errorGettingSections := g.FetchAllSectionsAsync(context, params.Pagination)
-		errorhandler.Handle(errorGettingSections)
+		errorhandler.Handle(errorGettingSections, g, "error getting sections", "usecase.get_all_sections")
 
 		return paginatedData
 	}
 
 	paginatedData, errorGettingSections := g.FetchAllPartialSectionsAsync(context, params.Pagination)
-	errorhandler.Handle(errorGettingSections)
+	errorhandler.Handle(errorGettingSections, g, "error getting partial sections", "usecase.get_all_sections")
 
 	sections := make([]models.Section, 0, len(paginatedData.Data))
 	for i, section := range paginatedData.Data {

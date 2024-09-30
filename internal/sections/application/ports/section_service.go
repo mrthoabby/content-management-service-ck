@@ -9,14 +9,13 @@ import (
 )
 
 type SectionService interface {
-	GetSectionByID(context.Context, types.GetSectionByIDParams) dto.SectionDTO
-	GetAllSections(context.Context, types.GetAllSectionsParams) coredomain.PaginatedResult[[]dto.SectionDTO]
+	GetSectionByID(context.Context, types.GetSectionByIDParams) dto.ResponseSectionDTO
+	GetAllSections(context.Context, types.GetAllSectionsParams) coredomain.PaginatedResult[[]dto.ResponseSectionDTO]
 
 	GetPageContentByPageID(context.Context, types.GetPageContentParams) dto.PageContentDTO
-	GetSectionsByQuery(context.Context, types.GetSectionsByQuery) []dto.SectionDTO
-	// GetPartialSectionsByQueryPaginated(string) []models.PartialSection
+	GetSectionsByQuery(context.Context, types.GetSectionsByQuery) []dto.ResponseSectionDTO
 
-	// CreateSection(models.Section)
+	CreateSection(context.Context, dto.CreateSectionRequestDTO)
 	// CreateSectionPage(models.PageIDName)
 
 	// UpdateSectionPageContent(models.SectionPageIDContent)

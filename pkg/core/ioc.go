@@ -23,6 +23,7 @@ func initializeSections(globalRouter *mux.Router) {
 		GetSections:          usecases.NewGetAllSections(repository),
 		GetPageContentByID:   usecases.NewGetPageContent(repository),
 		GetSectionsWithQuery: usecases.NewGetSectionsByQuery(repository),
+		CreateNewSection:     usecases.NewCreateSection(repository),
 	}
 
 	service := service.NewSectionService(commands)

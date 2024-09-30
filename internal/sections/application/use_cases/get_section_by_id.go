@@ -22,13 +22,13 @@ type GetSectionById struct {
 func (g *GetSectionById) Execute(context context.Context, params types.GetSectionByIDParams) models.Section {
 	if params.LoadPages {
 		secion, errorGettingSection := g.FetchSectionByIDAsync(context, models.SectionID(params.SectionID))
-		errorhandler.Handle(errorGettingSection)
+		errorhandler.Handle(errorGettingSection, g, "error getting section", "usecase.get_section_by_id")
 
 		return *secion
 	}
 
 	section, errorGettingSection := g.FetchPartialSectionByIDAsync(context, models.SectionID(params.SectionID))
-	errorhandler.Handle(errorGettingSection)
+	errorhandler.Handle(errorGettingSection, g, "error getting partial section", "usecase.get_section_by_id")
 
 	return models.Section{
 		ID:   section.ID,

@@ -10,7 +10,7 @@ type SectionHandler interface {
 	GetPageContentByPageID(http.ResponseWriter, *http.Request)
 	GetSectionsByQuery(http.ResponseWriter, *http.Request)
 
-	// CreateSection(http.ResponseWriter, *http.Request)
+	CreateSection(http.ResponseWriter, *http.Request)
 	// CreateSectionPage(http.ResponseWriter, *http.Request)
 
 	// UpdateSectionPageContent(http.ResponseWriter, *http.Request)

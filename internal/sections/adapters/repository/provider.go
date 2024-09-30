@@ -16,20 +16,56 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-var property struct {
-	userName     string
-	password     string
-	aside        string
-	databaseName string
+const (
+	sectionIdProperty   = "id"
+	sectionNameProperty = "name"
+
+	pageIdProperty      = "pages.id"
+	pageNameProperty    = "pages.name"
+	pageContentProperty = "pages.content"
+)
+
+var env struct {
+	userName       string
+	password       string
+	aside          string
+	databaseName   string
+	collectionName string
 }
 
 var currentClient *mongo.Client
 
 func loadProperties() {
-	property.userName = os.Getenv("SECTION_PROVIDER_REPOSITORY_USERNAME")
-	property.password = os.Getenv("SECTION_PROVIDER_REPOSITORY_PASSWORD")
-	property.aside = os.Getenv("SECTION_PROVIDER_REPOSITORY_ASIDE")
-	property.databaseName = os.Getenv("SECTION_PROVIDER_REPOSITORY_DATABASE_NAME")
+	env.userName = os.Getenv("SECTION_PROVIDER_REPOSITORY_USERNAME")
+	env.password = os.Getenv("SECTION_PROVIDER_REPOSITORY_PASSWORD")
+	env.aside = os.Getenv("SECTION_PROVIDER_REPOSITORY_ASIDE")
+	env.databaseName = os.Getenv("SECTION_PROVIDER_REPOSITORY_DATABASE_NAME")
+	env.collectionName = os.Getenv("SECTION_PROVIDER_REPOSITORY_COLLECTION_NAME")
+}
+
+func ensureIndexes(ctx context.Context) {
+	db := currentClient.Database(env.databaseName)
+	collection := db.Collection(env.collectionName)
+
+	idIndexModel := mongo.IndexModel{
+		Options: options.Index().SetUnique(true),
+		Keys:    bson.M{sectionIdProperty: 1},
+	}
+
+	searcher := mongo.IndexModel{
+		Options: options.Index().SetName("text_searcher").SetDefaultLanguage("spanish"),
+
+		Keys: bson.D{
+			{Key: sectionNameProperty, Value: 1},
+			{Key: pageNameProperty, Value: 1},
+			{Key: pageContentProperty, Value: 2},
+		},
+	}
+
+	index, errorSettingIndex := collection.Indexes().CreateMany(ctx, []mongo.IndexModel{idIndexModel, searcher})
+	errorhandler.Handle(errorSettingIndex, collection, "creating indexes", "provider")
+
+	logrus.Println("Indexes  : ", index)
 }
 
 func loadMongoDb() {
@@ -37,27 +73,29 @@ func loadMongoDb() {
 	defer cancel()
 
 	serverAPI := options.ServerAPI(options.ServerAPIVersion1)
-	clientOptions := options.Client().ApplyURI("mongodb+srv://" + property.userName + ":" + property.password + "@" + property.aside).SetServerAPIOptions(serverAPI)
+	clientOptions := options.Client().ApplyURI("mongodb+srv://" + env.userName + ":" + env.password + "@" + env.aside).SetServerAPIOptions(serverAPI)
 
 	client, errorConnecting := mongo.Connect(context, clientOptions)
-	errorhandler.Handle(errorConnecting)
+	errorhandler.Handle(errorConnecting, clientOptions, "loading mongo db", "provider")
 
 	currentClient = client
+
+	ensureIndexes(context)
 
 	pingDB(context)
 }
 
 func CleanUp(context context.Context) {
 	if err := currentClient.Disconnect(context); err != nil {
-		errorhandler.Handle(err)
+		errorhandler.Handle(err, currentClient, "cleaning up", "provider")
 	} else {
 		logrus.Println("Disconnected from MongoDB!")
 	}
 }
 
 func pingDB(ctx context.Context) {
-	if err := currentClient.Database(property.databaseName).RunCommand(ctx, bson.D{{Key: "ping", Value: 1}}).Err(); err != nil {
-		errorhandler.Handle(err)
+	if err := currentClient.Database(env.databaseName).RunCommand(ctx, bson.D{{Key: "ping", Value: 1}}).Err(); err != nil {
+		errorhandler.Handle(err, currentClient, "pinging db", "provider")
 	} else {
 		logrus.Println("Pinged. You successfully connected to MongoDB!")
 	}
@@ -67,22 +105,13 @@ func NewSectionProvider() *SectionProvider {
 	loadProperties()
 	loadMongoDb()
 	return &SectionProvider{
-		Collection: currentClient.Database(property.databaseName).Collection("sections"),
+		Collection: currentClient.Database(env.databaseName).Collection("sections"),
 	}
 }
 
 type SectionProvider struct {
 	*mongo.Collection
 }
-
-const (
-	sectionIdProperty   = "id"
-	sectionNameProperty = "name"
-
-	pageIdProperty      = "pages.id"
-	pageNameProperty    = "pages.name"
-	pageContentProperty = "pages.content"
-)
 
 func (s *SectionProvider) FetchSectionByIDAsync(context context.Context, sectionId models.SectionID) (*models.Section, error) {
 	var section *models.Section
@@ -307,8 +336,22 @@ func (s *SectionProvider) FetchPartialSectionsByQueryAsync(context context.Conte
 	return sections, nil
 }
 
-func (s *SectionProvider) CreateSectionAsync(_ context.Context, _ models.Section) error {
-	panic("not implemented") // TODO: Implement
+func (s *SectionProvider) CreateSectionAsync(context context.Context, model models.SectionIDName) error {
+	insertionResult, errorInserting := s.Collection.InsertOne(context, bson.M{
+		sectionIdProperty:   model.SectionID,
+		sectionNameProperty: model.SectionName,
+	})
+	if errorInserting != nil {
+		if mongo.IsDuplicateKeyError(errorInserting) {
+			return errortypes.NewConflictError("Section already exists")
+		}
+
+		return errorInserting
+	}
+
+	logrus.Println("Section created: ", insertionResult.InsertedID)
+
+	return nil
 }
 
 func (s *SectionProvider) CreateSectionPageAsync(_ context.Context, _ models.PageIDName) error {

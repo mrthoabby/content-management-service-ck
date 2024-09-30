@@ -6,7 +6,10 @@
         "mongodb",
         "mrthoabby",
         "numbersutil",
+        "oneof",
         "requestdto",
+        "spanish",
+        "uuid",
         "valueobjets"
     ]
 }

@@ -2,13 +2,15 @@ package errorhandler
 
 import (
 	"net/http"
+	"reflect"
+	"strings"
 
 	"github.com/sirupsen/logrus"
 )
 
-func Handle(errorReceived error) {
+func Handle(errorReceived error, instance any, asideData ...string) {
 	if errorReceived != nil {
-		logrus.Error(errorReceived.Error())
+		logrus.Error(errorReceived.Error() + " [instance: " + getTypeName(instance) + buildAsideData(asideData...) + "]")
 		commonError, isCommonError := errorReceived.(Commons)
 		if isCommonError {
 			panic(buildHandledCommonError(commonError))
@@ -22,34 +24,53 @@ func Handle(errorReceived error) {
 }
 
 func buildHandledCommonError(common Commons) HandledError {
+	var code int
+	var errMsg string
+
 	switch common.GetType() {
 	case NotFoundErrorType:
-		return HandledError{
-			Error: common.Error(),
-			Code:  http.StatusNotFound,
-		}
+		code = http.StatusNotFound
 	case DomainErrorType:
-		return HandledError{
-			Error: common.Error(),
-			Code:  http.StatusUnprocessableEntity,
-		}
-	case ValidationErrorType:
-		return HandledError{
-			Error: common.Error(),
-			Code:  http.StatusBadRequest,
-		}
+		code = http.StatusUnprocessableEntity
+	case ValidationErrorType, InvalidFormatErrorType:
+		code = http.StatusBadRequest
 	case ApiHandledError:
-		return HandledError{
-			Error: common.Error(),
-			Code:  http.StatusInternalServerError,
-		}
+		code = http.StatusInternalServerError
+	case ConflictErrorType:
+		code = http.StatusConflict
 	default:
-		return HandledError{
-			Error: "common unknown error",
-			Code:  http.StatusInternalServerError,
-		}
+		code = http.StatusInternalServerError
+		errMsg = "common unknown error"
 	}
 
+	if errMsg == "" {
+		errMsg = common.Error()
+	}
+
+	return HandledError{
+		Error: errMsg,
+		Code:  code,
+	}
+}
+
+func buildAsideData(asideData ...string) string {
+	if len(asideData) > 0 {
+		return "(" + strings.Join(asideData, " ") + ")"
+	}
+	return ""
+}
+
+func getTypeName(value any) string {
+	v := reflect.ValueOf(value)
+
+	if v.Kind() == reflect.Ptr {
+		if v.IsNil() {
+			return "Nil pointer"
+		} else {
+			return v.Elem().Type().Name()
+		}
+	}
+	return v.Type().Name()
 }
 
 func GetHanledError(err any) HandledError {

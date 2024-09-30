@@ -6,16 +6,20 @@ import (
 	"net/http"
 
 	"github.com/gorilla/mux"
+	"github.com/mrthoabby/content-management-service-ck/internal/sections/application/dto"
 	"github.com/mrthoabby/content-management-service-ck/internal/sections/application/ports"
 	"github.com/mrthoabby/content-management-service-ck/internal/sections/application/types"
 	coredomain "github.com/mrthoabby/content-management-service-ck/pkg/commons/domain"
 	errorhandler "github.com/mrthoabby/content-management-service-ck/pkg/commons/error_handler"
 	numbersutil "github.com/mrthoabby/content-management-service-ck/pkg/util/numbers_util"
 	stringutil "github.com/mrthoabby/content-management-service-ck/pkg/util/string_util"
-	"github.com/mrthoabby/content-management-service-ck/pkg/util/validator"
+	"github.com/mrthoabby/content-management-service-ck/pkg/util/validate"
 )
 
 const (
+	APIVersion  = "v1"
+	APIMainPath = "/api/" + APIVersion + "/sections"
+
 	LoadPagesQuery = "load_pages"
 
 	PageIDParam = "page_id"
@@ -37,7 +41,7 @@ func needLoadPages(request *http.Request) bool {
 	getPagesQueryValue := request.URL.Query().Get(LoadPagesQuery)
 
 	if !stringutil.IsEmptyString(getPagesQueryValue) {
-		getPages = validator.IsAValidBoolean(getPagesQueryValue, fmt.Sprintf("%s ", LoadPagesQuery))
+		getPages = validate.IsAValidBoolean(getPagesQueryValue, fmt.Sprintf("%s ", LoadPagesQuery))
 	}
 
 	return getPages
@@ -53,8 +57,8 @@ type SectionController struct {
 	sectionService ports.SectionService
 }
 
-func (s *SectionController) GetSectionByID(responseWriter http.ResponseWriter, request *http.Request) {
-	sectionId := validator.IsNotEmptyString(mux.Vars(request)[SectionIDParam], fmt.Sprintf(paramsRequiredMessage, SectionIDParam))
+func (s SectionController) GetSectionByID(responseWriter http.ResponseWriter, request *http.Request) {
+	sectionId := validate.IsNotEmptyString(mux.Vars(request)[SectionIDParam], fmt.Sprintf(paramsRequiredMessage, SectionIDParam))
 
 	sectionDTO := s.sectionService.GetSectionByID(request.Context(), types.GetSectionByIDParams{
 		SectionID: sectionId,
@@ -63,15 +67,15 @@ func (s *SectionController) GetSectionByID(responseWriter http.ResponseWriter, r
 
 	sectionJSON, errorParsingToJSON := json.Marshal(sectionDTO)
 
-	errorhandler.Handle(errorParsingToJSON)
+	errorhandler.Handle(errorParsingToJSON, s)
 
 	responseWriter.Write(sectionJSON)
 
 }
 
-func (s *SectionController) GetAllSections(responseWriter http.ResponseWriter, request *http.Request) {
-	currentPaginationPage := numbersutil.ForcePositiveValue(validator.IsAValidNumber(request.URL.Query().Get(PaginationCurrentPageQuery), fmt.Sprintf(queryParamIsRequiredMessage, PaginationCurrentPageQuery)))
-	paginationGroupedBy := numbersutil.ForcePositiveValue(validator.IsAValidNumber(request.URL.Query().Get(PaginationGroupedByQuery), fmt.Sprintf(queryParamIsRequiredMessage, PaginationGroupedByQuery)))
+func (s SectionController) GetAllSections(responseWriter http.ResponseWriter, request *http.Request) {
+	currentPaginationPage := numbersutil.ForcePositiveValue(validate.IsAValidNumber(request.URL.Query().Get(PaginationCurrentPageQuery), fmt.Sprintf(queryParamIsRequiredMessage, PaginationCurrentPageQuery)))
+	paginationGroupedBy := numbersutil.ForcePositiveValue(validate.IsAValidNumber(request.URL.Query().Get(PaginationGroupedByQuery), fmt.Sprintf(queryParamIsRequiredMessage, PaginationGroupedByQuery)))
 
 	sectionsDTO := s.sectionService.GetAllSections(request.Context(), types.GetAllSectionsParams{
 		LoadPages: needLoadPages(request),
@@ -83,15 +87,15 @@ func (s *SectionController) GetAllSections(responseWriter http.ResponseWriter, r
 
 	sectionsJSON, errorParsingToJSON := json.Marshal(sectionsDTO)
 
-	errorhandler.Handle(errorParsingToJSON)
+	errorhandler.Handle(errorParsingToJSON, s)
 
 	responseWriter.Write(sectionsJSON)
 
 }
 
-func (s *SectionController) GetPageContentByPageID(responseWriter http.ResponseWriter, request *http.Request) {
-	pageID := validator.IsNotEmptyString(mux.Vars(request)[PageIDParam], fmt.Sprintf(paramsRequiredMessage, PageIDParam))
-	sectionID := validator.IsNotEmptyString(mux.Vars(request)[SectionIDParam], fmt.Sprintf(paramsRequiredMessage, SectionIDParam))
+func (s SectionController) GetPageContentByPageID(responseWriter http.ResponseWriter, request *http.Request) {
+	pageID := validate.IsNotEmptyString(mux.Vars(request)[PageIDParam], fmt.Sprintf(paramsRequiredMessage, PageIDParam))
+	sectionID := validate.IsNotEmptyString(mux.Vars(request)[SectionIDParam], fmt.Sprintf(paramsRequiredMessage, SectionIDParam))
 
 	pageContentDTO := s.sectionService.GetPageContentByPageID(request.Context(), types.GetPageContentParams{
 		PageID:    pageID,
@@ -100,14 +104,14 @@ func (s *SectionController) GetPageContentByPageID(responseWriter http.ResponseW
 
 	pageContentJSON, errorParsingToJSON := json.Marshal(pageContentDTO)
 
-	errorhandler.Handle(errorParsingToJSON)
+	errorhandler.Handle(errorParsingToJSON, s)
 
 	responseWriter.Write(pageContentJSON)
 
 }
 
-func (s *SectionController) GetSectionsByQuery(responseWriter http.ResponseWriter, request *http.Request) {
-	query := validator.IsNotEmptyString(request.URL.Query().Get(QueryParam), fmt.Sprintf(queryParamIsRequiredMessage, QueryParam))
+func (s SectionController) GetSectionsByQuery(responseWriter http.ResponseWriter, request *http.Request) {
+	query := validate.IsNotEmptyString(request.URL.Query().Get(QueryParam), fmt.Sprintf(queryParamIsRequiredMessage, QueryParam))
 
 	sectionsDTO := s.sectionService.GetSectionsByQuery(request.Context(), types.GetSectionsByQuery{
 		Query:     query,
@@ -116,8 +120,20 @@ func (s *SectionController) GetSectionsByQuery(responseWriter http.ResponseWrite
 
 	sectionsJSON, errorParsingToJSON := json.Marshal(sectionsDTO)
 
-	errorhandler.Handle(errorParsingToJSON)
+	errorhandler.Handle(errorParsingToJSON, s)
 
 	responseWriter.Write(sectionsJSON)
 
+}
+
+func (s SectionController) CreateSection(responseWriter http.ResponseWriter, request *http.Request) {
+	sectionDTO, errorBuilding := dto.BuildCreateSectionRequestDTO(request.Body)
+	errorhandler.Handle(errorBuilding, s, "error building section dto", "handler: CreateSection")
+
+	validate.IsAValidStructure(sectionDTO, "section")
+
+	s.sectionService.CreateSection(request.Context(), *sectionDTO)
+
+	responseWriter.Header().Set("Location", fmt.Sprintf("%s/%s", APIMainPath, sectionDTO.ID))
+	responseWriter.WriteHeader(http.StatusCreated)
 }
