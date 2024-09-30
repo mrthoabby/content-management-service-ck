@@ -50,57 +50,36 @@ Se implementarán pruebas unitarias y de integración para garantizar la funcion
 - [ ] **Crear una nueva sección**
   - Endpoint: `POST /sections`
   - **Tareas**:
-    - [ ] Implementar la lógica para agregar una nueva sección en el servicio de dominio.
-    - [ ] Crear el método en el repositorio para persistir la nueva sección.
-    - [ ] Crear el controlador que maneje la solicitud y devuelva la sección creada.
+    - [ ] Implementar la lógica para crear una sección.
 
 - [ ] **Crear una nueva página dentro de una sección**
   - Endpoint: `POST /sections/{sectionId}/pages`
   - **Tareas**:
-    - [ ] Implementar la lógica para agregar una página en una sección existente.
-    - [ ] Crear el método en el repositorio para persistir la nueva página.
-    - [ ] Crear el controlador que maneje la solicitud y devuelva la página creada.
-
-- [ ] **Guardar contenido en una página existente**
-  - Endpoint: `POST /sections/{sectionId}/pages/{pageId}/content`
-  - **Tareas**:
-    - [ ] Implementar la lógica para agregar contenido a una página existente en el servicio de dominio.
-    - [ ] Crear el método en el repositorio para actualizar el contenido de la página.
-    - [ ] Crear el controlador que maneje la solicitud y devuelva la confirmación de la actualización.
+    - [ ] Implementar la lógica para crear una página en una sección existente.
+    - [ ] Lógica para modificar y guardar el contenido de una pagina
 
 ### Funcionalidades de **PUT**
 
 - [ ] **Modificar el nombre de una sección**
   - Endpoint: `PUT /sections/{sectionId}`
   - **Tareas**:
-    - [ ] Implementar la lógica para actualizar el nombre de una sección en el servicio de dominio.
-    - [ ] Crear el método en el repositorio para actualizar la sección en la base de datos.
-    - [ ] Crear el controlador que maneje la solicitud y devuelva la sección actualizada.
-
-- [ ] **Modificar el nombre de una página**
-  - Endpoint: `PUT /sections/{sectionId}/pages/{pageId}`
-  - **Tareas**:
-    - [ ] Implementar la lógica para actualizar el nombre de una página en el servicio de dominio.
-    - [ ] Crear el método en el repositorio para actualizar la página en la base de datos.
-    - [ ] Crear el controlador que maneje la solicitud y devuelva la página actualizada.
+    - [ ] Implementar la lógica para actualizar el nombre de una sección.
+    - [ ] Lógica para cambiar el nombre de una pagina
 
 ### Funcionalidades de **DELETE**
 
 - [ ] **Eliminar una sección y todas sus páginas**
   - Endpoint: `DELETE /sections/{sectionId}`
   - **Tareas**:
-    - [ ] Implementar la lógica para eliminar una sección y sus páginas en el servicio de dominio.
-    - [ ] Crear el método en el repositorio para eliminar la sección y sus páginas en la base de datos.
-    - [ ] Crear el controlador que maneje la solicitud y devuelva la confirmación de la eliminación.
+    - [ ] Implementar la lógica para eliminar una sección y sus páginas.
 
 - [ ] **Eliminar una página específica**
   - Endpoint: `DELETE /sections/{sectionId}/pages/{pageId}`
   - **Tareas**:
-    - [ ] Implementar la lógica para eliminar una página específica en el servicio de dominio.
-    - [ ] Crear el método en el repositorio para eliminar la página en la base de datos.
-    - [ ] Crear el controlador que maneje la solicitud y devuelva la confirmación de la eliminación.
+    - [ ] Implementar la lógica para eliminar una página específica.
 
-- [ ] Implementar Alertas Básicas en Prometheus
+## Lo necesario y faltante
+
 - [ ] Implementar Documentación de la API
 - [ ] Pruebas de Integración
 - [ ] Refactorización y Optimización
