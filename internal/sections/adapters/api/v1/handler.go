@@ -6,7 +6,7 @@ import (
 	"net/http"
 
 	"github.com/gorilla/mux"
-	ports "github.com/mrthoabby/content-management-service-ck/internal/sections/application/ports/out"
+	"github.com/mrthoabby/content-management-service-ck/internal/sections/application/ports"
 	"github.com/mrthoabby/content-management-service-ck/internal/sections/application/types"
 	coredomain "github.com/mrthoabby/content-management-service-ck/pkg/commons/domain"
 	errorhandler "github.com/mrthoabby/content-management-service-ck/pkg/commons/error_handler"

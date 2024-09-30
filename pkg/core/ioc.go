@@ -7,7 +7,7 @@ import (
 	"github.com/mrthoabby/content-management-service-ck/internal/sections/adapters/api"
 	v1 "github.com/mrthoabby/content-management-service-ck/internal/sections/adapters/api/v1"
 	"github.com/mrthoabby/content-management-service-ck/internal/sections/adapters/repository"
-	"github.com/mrthoabby/content-management-service-ck/internal/sections/application"
+	"github.com/mrthoabby/content-management-service-ck/internal/sections/adapters/service"
 	usecases "github.com/mrthoabby/content-management-service-ck/internal/sections/application/use_cases"
 )
 
@@ -18,11 +18,14 @@ func initializeSections(globalRouter *mux.Router) {
 	cleaners = append(cleaners, repository.CleanUp)
 	repository := repository.NewSectionProvider()
 
-	getItemByIDUseCase := usecases.NewGetSectionById(repository)
-	getAllItemsUseCase := usecases.NewGetAllSections(repository)
-	getPageContentByIDUseCase := usecases.NewGetPageContent(repository)
+	commands := usecases.UseCasesCommands{
+		GetISectionByID:      usecases.NewGetSectionById(repository),
+		GetSections:          usecases.NewGetAllSections(repository),
+		GetPageContentByID:   usecases.NewGetPageContent(repository),
+		GetSectionsWithQuery: usecases.NewGetSectionsByQuery(repository),
+	}
 
-	service := application.NewSectionService(getItemByIDUseCase, getAllItemsUseCase, getPageContentByIDUseCase)
+	service := service.NewSectionService(commands)
 
 	handler := v1.NewSectionHandler(service)
 
