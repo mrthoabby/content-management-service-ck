@@ -80,6 +80,7 @@ const (
 	sectionNameProperty = "name"
 
 	pageIdProperty      = "pages.id"
+	pageNameProperty    = "pages.name"
 	pageContentProperty = "pages.content"
 )
 
@@ -244,8 +245,66 @@ func (s *SectionProvider) FetchPageContentByPageIDAsync(context context.Context,
 	return pageContent, nil
 }
 
-func (s *SectionProvider) FetchPartialSectionsByQueryPaginatedAsync(_ context.Context, _ models.SectionID) ([]models.PartialSection, error) {
-	panic("not implemented") // TODO: Implement
+func (s *SectionProvider) FetchSectionsByQueryAsync(context context.Context, query string) ([]models.Section, error) {
+	const regexTag = "$regex"
+
+	filter := bson.M{
+		"$or": bson.A{
+			bson.M{sectionNameProperty: bson.M{regexTag: query}},
+			bson.M{pageNameProperty: bson.M{regexTag: query}},
+			bson.M{pageContentProperty: bson.M{regexTag: query}},
+		},
+	}
+
+	options := options.Find()
+
+	cursor, errorFinding := s.Collection.Find(context, filter, options)
+	if errorFinding != nil {
+		if errorFinding == mongo.ErrNoDocuments {
+			return nil, errortypes.NewNotFoundError("Sections not found")
+		}
+		return nil, errorFinding
+	}
+	defer cursor.Close(context)
+
+	var sections []models.Section
+	if errorDecoding := cursor.All(context, &sections); errorDecoding != nil {
+		return nil, errorDecoding
+	}
+
+	return sections, nil
+}
+
+func (s *SectionProvider) FetchPartialSectionsByQueryAsync(context context.Context, query string) ([]models.PartialSection, error) {
+	const regexTag = "$regex"
+
+	filter := bson.M{
+		"$or": bson.A{
+			bson.M{sectionNameProperty: bson.M{regexTag: query}},
+			bson.M{pageNameProperty: bson.M{regexTag: query}},
+			bson.M{pageContentProperty: bson.M{regexTag: query}},
+		},
+	}
+
+	options := options.Find().SetProjection(bson.D{
+		{Key: pageContentProperty, Value: 0},
+	})
+
+	cursor, errorFinding := s.Collection.Find(context, filter, options)
+	if errorFinding != nil {
+		if errorFinding == mongo.ErrNoDocuments {
+			return nil, errortypes.NewNotFoundError("Sections not found")
+		}
+		return nil, errorFinding
+	}
+	defer cursor.Close(context)
+
+	var sections []models.PartialSection
+	if errorDecoding := cursor.All(context, &sections); errorDecoding != nil {
+		return nil, errorDecoding
+	}
+
+	return sections, nil
 }
 
 func (s *SectionProvider) CreateSectionAsync(_ context.Context, _ models.Section) error {

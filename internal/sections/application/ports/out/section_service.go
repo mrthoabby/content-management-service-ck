@@ -13,6 +13,7 @@ type SectionService interface {
 	GetAllSections(context.Context, types.GetAllSectionsParams) coredomain.PaginatedResult[[]dto.SectionDTO]
 
 	GetPageContentByPageID(context.Context, types.GetPageContentParams) dto.PageContentDTO
+	GetSectionsByQuery(context.Context, types.GetSectionsByQuery) []dto.SectionDTO
 	// GetPartialSectionsByQueryPaginated(string) []models.PartialSection
 
 	// CreateSection(models.Section)
