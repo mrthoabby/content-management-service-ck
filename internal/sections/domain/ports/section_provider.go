@@ -14,7 +14,7 @@ type SectionProvider interface {
 	FetchAllSectionsAsync(context context.Context, pagination coredomain.Pagination) (coredomain.PaginatedResult[[]models.Section], error)
 	FetchAllPartialSectionsAsync(context.Context, coredomain.Pagination) (coredomain.PaginatedResult[[]models.PartialSection], error)
 
-	FetchSectionPageContentBySectionPageIDAsync(context.Context, models.SectionPageID) (*models.PageContent, error)
+	FetchPageContentByPageIDAsync(context.Context, models.SectionPageID) (*models.SectionPageIDContent, error)
 	FetchPartialSectionsByQueryPaginatedAsync(context.Context, models.SectionID) ([]models.PartialSection, error)
 
 	CreateSectionAsync(context.Context, models.Section) error

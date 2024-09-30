@@ -16,12 +16,17 @@ import (
 )
 
 const (
-	loadPagesQuery = "load_pages"
+	LoadPagesQuery = "load_pages"
 
-	sectionIDParam = "section_id"
+	PageIDParam = "page_id"
 
-	paginationCurrentPageQuery = "current_page"
-	paginationGroupedByQuery   = "grouped_by"
+	SectionIDParam = "section_id"
+
+	PaginationCurrentPageQuery = "current_page"
+	PaginationGroupedByQuery   = "grouped_by"
+
+	paramsRequiredMessage       = "%s param is required"
+	queryParamIsRequiredMessage = "%s query param is required"
 )
 
 func NewSectionHandler(sectionService ports.SectionService) *SectionController {
@@ -36,13 +41,13 @@ type SectionController struct {
 
 func (s *SectionController) GetSectionByID(responseWriter http.ResponseWriter, request *http.Request) {
 	getPages := false
-	getPagesQueryValue := request.URL.Query().Get(loadPagesQuery)
+	getPagesQueryValue := request.URL.Query().Get(LoadPagesQuery)
 
 	if !stringutil.IsEmptyString(getPagesQueryValue) {
-		getPages = validator.IsAValidBoolean(getPagesQueryValue, fmt.Sprintf("%s ", loadPagesQuery))
+		getPages = validator.IsAValidBoolean(getPagesQueryValue, fmt.Sprintf("%s ", LoadPagesQuery))
 	}
 
-	sectionId := validator.IsNotEmptyString(mux.Vars(request)[sectionIDParam], fmt.Sprintf("%s param is required", sectionIDParam))
+	sectionId := validator.IsNotEmptyString(mux.Vars(request)[SectionIDParam], fmt.Sprintf(paramsRequiredMessage, SectionIDParam))
 
 	sectionDTO := s.sectionService.GetSectionByID(request.Context(), types.GetSectionByIDParams{
 		SectionID: sectionId,
@@ -59,14 +64,14 @@ func (s *SectionController) GetSectionByID(responseWriter http.ResponseWriter, r
 
 func (s *SectionController) GetAllSections(responseWriter http.ResponseWriter, request *http.Request) {
 	getPages := false
-	getPagesQueryValue := request.URL.Query().Get(loadPagesQuery)
+	getPagesQueryValue := request.URL.Query().Get(LoadPagesQuery)
 
 	if !stringutil.IsEmptyString(getPagesQueryValue) {
-		getPages = validator.IsAValidBoolean(getPagesQueryValue, fmt.Sprintf("%s ", loadPagesQuery))
+		getPages = validator.IsAValidBoolean(getPagesQueryValue, fmt.Sprintf("%s ", LoadPagesQuery))
 	}
 
-	currentPaginationPage := numbersutil.ForcePositiveValue(validator.IsAValidNumber(request.URL.Query().Get(paginationCurrentPageQuery), fmt.Sprintf("%s query param is required", paginationCurrentPageQuery)))
-	paginationGroupedBy := numbersutil.ForcePositiveValue(validator.IsAValidNumber(request.URL.Query().Get(paginationGroupedByQuery), fmt.Sprintf("%s query param is required", paginationGroupedByQuery)))
+	currentPaginationPage := numbersutil.ForcePositiveValue(validator.IsAValidNumber(request.URL.Query().Get(PaginationCurrentPageQuery), fmt.Sprintf(queryParamIsRequiredMessage, PaginationCurrentPageQuery)))
+	paginationGroupedBy := numbersutil.ForcePositiveValue(validator.IsAValidNumber(request.URL.Query().Get(PaginationGroupedByQuery), fmt.Sprintf(queryParamIsRequiredMessage, PaginationGroupedByQuery)))
 
 	sectionsDTO := s.sectionService.GetAllSections(request.Context(), types.GetAllSectionsParams{
 		LoadPages: getPages,
@@ -81,5 +86,22 @@ func (s *SectionController) GetAllSections(responseWriter http.ResponseWriter, r
 	errorhandler.Handle(errorParsingToJSON)
 
 	responseWriter.Write(sectionsJSON)
+
+}
+
+func (s *SectionController) GetPageContentByPageID(responseWriter http.ResponseWriter, request *http.Request) {
+	pageID := validator.IsNotEmptyString(mux.Vars(request)[PageIDParam], fmt.Sprintf(paramsRequiredMessage, PageIDParam))
+	sectionID := validator.IsNotEmptyString(mux.Vars(request)[SectionIDParam], fmt.Sprintf(paramsRequiredMessage, SectionIDParam))
+
+	pageContentDTO := s.sectionService.GetPageContentByPageID(request.Context(), types.GetPageContentParams{
+		PageID:    pageID,
+		SectionID: sectionID,
+	})
+
+	pageContentJSON, errorParsingToJSON := json.Marshal(pageContentDTO)
+
+	errorhandler.Handle(errorParsingToJSON)
+
+	responseWriter.Write(pageContentJSON)
 
 }

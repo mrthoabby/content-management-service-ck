@@ -20,8 +20,9 @@ func initializeSections(globalRouter *mux.Router) {
 
 	getItemByIDUseCase := usecases.NewGetSectionById(repository)
 	getAllItemsUseCase := usecases.NewGetAllSections(repository)
+	getPageContentByIDUseCase := usecases.NewGetPageContent(repository)
 
-	service := application.NewSectionService(getItemByIDUseCase, getAllItemsUseCase)
+	service := application.NewSectionService(getItemByIDUseCase, getAllItemsUseCase, getPageContentByIDUseCase)
 
 	handler := v1.NewSectionHandler(service)
 

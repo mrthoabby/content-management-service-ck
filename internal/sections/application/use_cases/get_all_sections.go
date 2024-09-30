@@ -12,17 +12,17 @@ import (
 
 func NewGetAllSections(section ports.SectionProvider) *GetAllSections {
 	return &GetAllSections{
-		section: section,
+		sections: section,
 	}
 }
 
 type GetAllSections struct {
-	section ports.SectionProvider
+	sections ports.SectionProvider
 }
 
 func (g *GetAllSections) Execute(context context.Context, params types.GetAllSectionsParams) coredomain.PaginatedResult[[]models.Section] {
 	if params.LoadPages {
-		paginatedData, errorGettingSections := g.section.FetchAllPartialSectionsAsync(context, params.Pagination)
+		paginatedData, errorGettingSections := g.sections.FetchAllPartialSectionsAsync(context, params.Pagination)
 		errorhandler.Handle(errorGettingSections)
 
 		sections := make([]models.Section, 0, len(paginatedData.Data))
@@ -42,7 +42,7 @@ func (g *GetAllSections) Execute(context context.Context, params types.GetAllSec
 		}
 	}
 
-	paginatedData, errorGettingSections := g.section.FetchAllSectionsAsync(context, params.Pagination)
+	paginatedData, errorGettingSections := g.sections.FetchAllSectionsAsync(context, params.Pagination)
 	errorhandler.Handle(errorGettingSections)
 
 	return paginatedData
