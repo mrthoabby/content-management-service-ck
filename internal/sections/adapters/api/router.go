@@ -26,6 +26,8 @@ func (r *SectionRouter) InitialiceSectionRouter(middlewares ...*mux.MiddlewareFu
 	mainPath.HandleFunc(fmt.Sprintf("/{%s}", v1.SectionIDParam), r.GetSectionByID).Methods(http.MethodGet)
 	mainPath.HandleFunc("", r.GetAllSections).Methods(http.MethodGet)
 	mainPath.HandleFunc(fmt.Sprintf("/{%s}/pages/{%s}", v1.SectionIDParam, v1.PageIDParam), r.GetPageContentByPageID).Methods(http.MethodGet)
+	mainPath.HandleFunc("/search", r.GetSectionsByQuery).Methods(http.MethodGet)
+
 }
 
 func NewSectionRouter(sectionHandler ports.SectionHandler, router *mux.Router) *SectionRouter {

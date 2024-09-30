@@ -10,18 +10,19 @@ import (
 	coredomain "github.com/mrthoabby/content-management-service-ck/pkg/commons/domain"
 )
 
-func NewSectionService(getItemByID in.UseCaseWithParamAndReturn[types.GetSectionByIDParams, models.Section], getAllItems in.UseCaseWithParamAndReturn[types.GetAllSectionsParams, coredomain.PaginatedResult[[]models.Section]], getPageContentByID in.UseCaseWithParamAndReturn[types.GetPageContentParams, models.SectionPageIDContent]) *Service {
+func NewSectionService(getItemByID in.UseCaseWithParamAndReturn[types.GetSectionByIDParams, models.Section], getAllSections in.UseCaseWithParamAndReturn[types.GetAllSectionsParams, coredomain.PaginatedResult[[]models.Section]], getPageContentByID in.UseCaseWithParamAndReturn[types.GetPageContentParams, models.SectionPageIDContent]) *Service {
 	return &Service{
 		getItemByID:        getItemByID,
-		getAllItems:        getAllItems,
+		getAllSections:     getAllSections,
 		getPageContentByID: getPageContentByID,
 	}
 }
 
 type Service struct {
 	getItemByID        in.UseCaseWithParamAndReturn[types.GetSectionByIDParams, models.Section]
-	getAllItems        in.UseCaseWithParamAndReturn[types.GetAllSectionsParams, coredomain.PaginatedResult[[]models.Section]]
+	getAllSections     in.UseCaseWithParamAndReturn[types.GetAllSectionsParams, coredomain.PaginatedResult[[]models.Section]]
 	getPageContentByID in.UseCaseWithParamAndReturn[types.GetPageContentParams, models.SectionPageIDContent]
+	getSectionsByQuery in.UseCaseWithParamAndReturn[types.GetSectionsByQuery, []models.Section]
 }
 
 func (s *Service) GetSectionByID(context context.Context, params types.GetSectionByIDParams) dto.SectionDTO {
@@ -33,7 +34,7 @@ func (s *Service) GetSectionByID(context context.Context, params types.GetSectio
 }
 
 func (s *Service) GetAllSections(context context.Context, params types.GetAllSectionsParams) coredomain.PaginatedResult[[]dto.SectionDTO] {
-	pagination := s.getAllItems.Execute(context, params)
+	pagination := s.getAllSections.Execute(context, params)
 
 	sectionsDTO := MapSectionsToSectionDTO(pagination.Data)
 
@@ -52,4 +53,12 @@ func (s *Service) GetPageContentByPageID(context context.Context, params types.G
 	pageContentDTO := MapPageContentToPageContentDTO(pageContent)
 
 	return pageContentDTO
+}
+
+func (s *Service) GetSectionsByQuery(context context.Context, params types.GetSectionsByQuery) []dto.SectionDTO {
+	sections := s.getSectionsByQuery.Execute(context, params)
+
+	sectionsDTO := MapSectionsToSectionDTO(sections)
+
+	return sectionsDTO
 }

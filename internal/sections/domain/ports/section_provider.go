@@ -11,11 +11,13 @@ type SectionProvider interface {
 	FetchSectionByIDAsync(context.Context, models.SectionID) (*models.Section, error)
 	FetchPartialSectionByIDAsync(context.Context, models.SectionID) (*models.PartialSection, error)
 
-	FetchAllSectionsAsync(context context.Context, pagination coredomain.Pagination) (coredomain.PaginatedResult[[]models.Section], error)
+	FetchAllSectionsAsync(context.Context, coredomain.Pagination) (coredomain.PaginatedResult[[]models.Section], error)
 	FetchAllPartialSectionsAsync(context.Context, coredomain.Pagination) (coredomain.PaginatedResult[[]models.PartialSection], error)
 
+	FetchSectionsByQueryAsync(context.Context, string) ([]models.Section, error)
+	FetchPartialSectionsByQueryAsync(context.Context, string) ([]models.PartialSection, error)
+
 	FetchPageContentByPageIDAsync(context.Context, models.SectionPageID) (*models.SectionPageIDContent, error)
-	FetchPartialSectionsByQueryPaginatedAsync(context.Context, models.SectionID) ([]models.PartialSection, error)
 
 	CreateSectionAsync(context.Context, models.Section) error
 	CreateSectionPageAsync(context.Context, models.PageIDName) error

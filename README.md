@@ -40,12 +40,10 @@ Se implementarán pruebas unitarias y de integración para garantizar la funcion
     - [x] Implementar la lógica para buscar una sección por su `sectionId`.
     - [x] Implementar la lógica para obtener el contenido de la página por su `pageId`.
 
-- [ ] **Buscar secciones y páginas**
+- [x] **Buscar secciones y páginas**
   - Endpoint: `GET /sections/search?query={query}`
   - **Tareas**:
-    - [ ] Implementar la lógica de búsqueda en el servicio de dominio.
-    - [ ] Crear un método en el repositorio para realizar la búsqueda en la base de datos.
-    - [ ] Crear el controlador que maneje la solicitud de búsqueda y devuelva los resultados.
+    - [x] Implementar la lógica de búsqueda de paginas y sections por query
 
 ### Funcionalidades de **POST**
 
