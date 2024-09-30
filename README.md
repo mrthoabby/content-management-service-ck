@@ -47,10 +47,10 @@ Se implementarán pruebas unitarias y de integración para garantizar la funcion
 
 ### Funcionalidades de **POST**
 
-- [ ] **Crear una nueva sección**
+- [x] **Crear una nueva sección**
   - Endpoint: `POST /sections`
   - **Tareas**:
-    - [ ] Implementar la lógica para crear una sección.
+    - [x] Implementar la lógica para crear una sección.
 
 - [ ] **Crear una nueva página dentro de una sección**
   - Endpoint: `POST /sections/{sectionId}/pages`
