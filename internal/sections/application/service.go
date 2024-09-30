@@ -10,16 +10,18 @@ import (
 	coredomain "github.com/mrthoabby/content-management-service-ck/pkg/commons/domain"
 )
 
-func NewSectionService(getItemByID in.UseCaseWithParamAndReturn[types.GetSectionByIDParams, models.Section], getAllItems in.UseCaseWithParamAndReturn[types.GetAllSectionsParams, coredomain.PaginatedResult[[]models.Section]]) *Service {
+func NewSectionService(getItemByID in.UseCaseWithParamAndReturn[types.GetSectionByIDParams, models.Section], getAllItems in.UseCaseWithParamAndReturn[types.GetAllSectionsParams, coredomain.PaginatedResult[[]models.Section]], getPageContentByID in.UseCaseWithParamAndReturn[types.GetPageContentParams, models.SectionPageIDContent]) *Service {
 	return &Service{
-		getItemByID: getItemByID,
-		getAllItems: getAllItems,
+		getItemByID:        getItemByID,
+		getAllItems:        getAllItems,
+		getPageContentByID: getPageContentByID,
 	}
 }
 
 type Service struct {
-	getItemByID in.UseCaseWithParamAndReturn[types.GetSectionByIDParams, models.Section]
-	getAllItems in.UseCaseWithParamAndReturn[types.GetAllSectionsParams, coredomain.PaginatedResult[[]models.Section]]
+	getItemByID        in.UseCaseWithParamAndReturn[types.GetSectionByIDParams, models.Section]
+	getAllItems        in.UseCaseWithParamAndReturn[types.GetAllSectionsParams, coredomain.PaginatedResult[[]models.Section]]
+	getPageContentByID in.UseCaseWithParamAndReturn[types.GetPageContentParams, models.SectionPageIDContent]
 }
 
 func (s *Service) GetSectionByID(context context.Context, params types.GetSectionByIDParams) dto.SectionDTO {
@@ -42,4 +44,12 @@ func (s *Service) GetAllSections(context context.Context, params types.GetAllSec
 		GroupedBy:   pagination.GroupedBy,
 		TotalPages:  pagination.TotalPages,
 	}
+}
+
+func (s *Service) GetPageContentByPageID(context context.Context, params types.GetPageContentParams) dto.PageContentDTO {
+	pageContent := s.getPageContentByID.Execute(context, params)
+
+	pageContentDTO := MapPageContentToPageContentDTO(pageContent)
+
+	return pageContentDTO
 }

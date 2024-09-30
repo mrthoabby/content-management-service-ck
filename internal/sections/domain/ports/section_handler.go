@@ -7,7 +7,7 @@ import (
 type SectionHandler interface {
 	GetSectionByID(http.ResponseWriter, *http.Request)
 	GetAllSections(http.ResponseWriter, *http.Request)
-	// GetSectionPageContentBySectionIDAndPageID(http.ResponseWriter, *http.Request)
+	GetPageContentByPageID(http.ResponseWriter, *http.Request)
 	// GetPartialSectionsByQueryPaginated(http.ResponseWriter, *http.Request)
 
 	// CreateSection(http.ResponseWriter, *http.Request)

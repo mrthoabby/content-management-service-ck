@@ -17,7 +17,7 @@ func (p PageID) Validate() errorhandler.Commons {
 }
 
 type PageContent struct {
-	Content string
+	Data string
 }
 
 type PageName string

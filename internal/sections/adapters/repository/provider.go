@@ -79,7 +79,7 @@ const (
 	sectionIdProperty   = "id"
 	sectionNameProperty = "name"
 
-	pageIdProperty      = "id"
+	pageIdProperty      = "pages.id"
 	pageContentProperty = "pages.content"
 )
 
@@ -220,8 +220,28 @@ func (s *SectionProvider) FetchAllPartialSectionsAsync(context context.Context, 
 	}, nil
 }
 
-func (s *SectionProvider) FetchSectionPageContentBySectionPageIDAsync(_ context.Context, _ models.SectionPageID) (*models.PageContent, error) {
-	panic("not implemented") // TODO: Implement
+func (s *SectionProvider) FetchPageContentByPageIDAsync(context context.Context, params models.SectionPageID) (*models.SectionPageIDContent, error) {
+	var pageContent *models.SectionPageIDContent
+
+	filter := bson.D{{Key: sectionIdProperty, Value: params.SectionID}, {Key: pageIdProperty, Value: params.PageID}}
+
+	projection := bson.D{
+		{Key: sectionIdProperty, Value: 1},
+		{Key: pageIdProperty, Value: 1},
+		{Key: pageContentProperty, Value: 1},
+	}
+
+	opts := options.FindOne().SetProjection(projection)
+
+	errorFinding := s.Collection.FindOne(context, filter, opts).Decode(pageContent)
+	if errorFinding != nil {
+		if errorFinding == mongo.ErrNoDocuments {
+			return nil, errortypes.NewNotFoundError("Page not found")
+		}
+		return nil, errorFinding
+	}
+
+	return pageContent, nil
 }
 
 func (s *SectionProvider) FetchPartialSectionsByQueryPaginatedAsync(_ context.Context, _ models.SectionID) ([]models.PartialSection, error) {

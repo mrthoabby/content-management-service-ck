@@ -29,17 +29,16 @@ Se implementarán pruebas unitarias y de integración para garantizar la funcion
 
 ### Funcionalidades de **GET**
 
-- [ ] **Obtener todas las secciones y sus páginas**
+- [x] **Obtener todas las secciones y sus páginas**
   - Endpoint: `GET /sections`
   - **Tareas**:
     - [x] Implementar la lógica para listar todas las secciones parciales de forma paginada
 
-- [ ] **Obtener el contenido de una página específica**
+- [x] **Obtener el contenido de una página específica**
   - Endpoint: `GET /sections/{sectionId}/pages/{pageId}`
   - **Tareas**:
-    - [ ] Implementar la lógica para buscar una sección por su `sectionId`.
-    - [ ] Implementar la lógica para buscar la página por su `pageId`.
-    - [ ] Crear el controlador que devuelva el contenido de la página.
+    - [x] Implementar la lógica para buscar una sección por su `sectionId`.
+    - [x] Implementar la lógica para obtener el contenido de la página por su `pageId`.
 
 - [ ] **Buscar secciones y páginas**
   - Endpoint: `GET /sections/search?query={query}`

@@ -18,7 +18,7 @@ func MapPageToPageDTO(page models.Page) dto.PageDTO {
 	return dto.PageDTO{
 		ID:      string(page.ID),
 		Name:    string(page.Name),
-		Content: models.PageContent(page.Content).Content,
+		Content: models.PageContent(page.Content).Data,
 	}
 }
 
@@ -40,4 +40,12 @@ func MapSectionsToSectionDTO(sections []models.Section) []dto.SectionDTO {
 	}
 
 	return sectionsDTO
+}
+
+func MapPageContentToPageContentDTO(pageContent models.SectionPageIDContent) dto.PageContentDTO {
+	return dto.PageContentDTO{
+		SectionID: string(pageContent.SectionID),
+		PageID:    string(pageContent.PageID),
+		Content:   string(pageContent.Content.Data),
+	}
 }

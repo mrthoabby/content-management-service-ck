@@ -1,9 +1,11 @@
 package api
 
 import (
+	"fmt"
 	"net/http"
 
 	"github.com/gorilla/mux"
+	v1 "github.com/mrthoabby/content-management-service-ck/internal/sections/adapters/api/v1"
 	"github.com/mrthoabby/content-management-service-ck/internal/sections/domain/ports"
 )
 
@@ -21,8 +23,9 @@ func (r *SectionRouter) InitialiceSectionRouter(middlewares ...*mux.MiddlewareFu
 
 	mainPath := r.PathPrefix("/api/v1/sections").Subrouter()
 
-	mainPath.HandleFunc("/{section_id}", r.GetSectionByID).Methods(http.MethodGet)
+	mainPath.HandleFunc(fmt.Sprintf("/{%s}", v1.SectionIDParam), r.GetSectionByID).Methods(http.MethodGet)
 	mainPath.HandleFunc("", r.GetAllSections).Methods(http.MethodGet)
+	mainPath.HandleFunc(fmt.Sprintf("/{%s}/pages/{%s}", v1.SectionIDParam, v1.PageIDParam), r.GetPageContentByPageID).Methods(http.MethodGet)
 }
 
 func NewSectionRouter(sectionHandler ports.SectionHandler, router *mux.Router) *SectionRouter {
