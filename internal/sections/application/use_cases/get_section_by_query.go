@@ -9,6 +9,12 @@ import (
 	errorhandler "github.com/mrthoabby/content-management-service-ck/pkg/commons/error_handler"
 )
 
+func NewGetSectionsByQuery(section ports.SectionProvider) *GetSectionByQuery {
+	return &GetSectionByQuery{
+		SectionProvider: section,
+	}
+}
+
 type GetSectionByQuery struct {
 	ports.SectionProvider
 }
