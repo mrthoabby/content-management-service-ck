@@ -137,3 +137,16 @@ func (s SectionController) CreateSection(responseWriter http.ResponseWriter, req
 	responseWriter.Header().Set("Location", fmt.Sprintf("%s/%s", APIMainPath, sectionDTO.ID))
 	responseWriter.WriteHeader(http.StatusCreated)
 }
+
+func (s SectionController) CreateSectionPage(responseWriter http.ResponseWriter, request *http.Request) {
+	sectionID := validate.IsNotEmptyString(mux.Vars(request)[SectionIDParam], fmt.Sprintf(paramsRequiredMessage, SectionIDParam))
+	pageDTO, errorBuilding := dto.BuildCreateSectionPageRequestDTO(request.Body, sectionID)
+	errorhandler.Handle(errorBuilding, s, "error building page dto", "handler: CreateSectionPage")
+
+	validate.IsAValidStructure(pageDTO, "page")
+
+	s.sectionService.CreateSectionPage(request.Context(), *pageDTO)
+
+	responseWriter.Header().Set("Location", fmt.Sprintf("%s/%s/pages/%s", APIMainPath, sectionID, pageDTO.PageID))
+	responseWriter.WriteHeader(http.StatusCreated)
+}

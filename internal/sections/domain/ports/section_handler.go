@@ -11,7 +11,7 @@ type SectionHandler interface {
 	GetSectionsByQuery(http.ResponseWriter, *http.Request)
 
 	CreateSection(http.ResponseWriter, *http.Request)
-	// CreateSectionPage(http.ResponseWriter, *http.Request)
+	CreateSectionPage(http.ResponseWriter, *http.Request)
 
 	// UpdateSectionPageContent(http.ResponseWriter, *http.Request)
 	// UpdateSectionPageName(http.ResponseWriter, *http.Request)

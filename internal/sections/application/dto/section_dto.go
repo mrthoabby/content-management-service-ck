@@ -14,6 +14,30 @@ type ResponseSectionDTO struct {
 	Pages []PageDTO `json:"pages,omitempty"`
 }
 
+type CreateSectionPageRequestDTO struct {
+	SectionID string `json:"section_id" validate:"required"`
+	PageID    string `json:"id" validate:"required"`
+	Name      string `json:"name" validate:"required"`
+}
+
+func BuildCreateSectionPageRequestDTO(body io.ReadCloser, sectionId string) (*CreateSectionPageRequestDTO, error) {
+	if body == http.NoBody {
+		return nil, errortypes.NewValidationError("body is required")
+	}
+
+	sectionDTO := &CreateSectionPageRequestDTO{}
+	errorParsingBody := json.NewDecoder(body).Decode(sectionDTO)
+	if errorParsingBody != nil {
+		if _, ok := errorParsingBody.(*json.SyntaxError); ok {
+			return nil, errortypes.NewInvalidFormatError("Invalid JSON format")
+		}
+		return nil, errorParsingBody
+	}
+	sectionDTO.SectionID = sectionId
+
+	return sectionDTO, nil
+}
+
 type CreateSectionRequestDTO struct {
 	ID   string `json:"id" validate:"required"`
 	Name string `json:"name" validate:"required"`
