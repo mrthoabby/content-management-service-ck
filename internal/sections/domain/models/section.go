@@ -54,9 +54,11 @@ type SectionPageIDPageName struct {
 	NetPageID PageIDName
 }
 
-type SectionPageIDName struct {
-	SectionID   SectionID
-	SectionName SectionName
+type SectionIDPageIDContent struct {
+	SectionID SectionID
+	PageID    PageID
+	PageName  PageName
+	Content   PageContent
 }
 
 type SectionIDName struct {

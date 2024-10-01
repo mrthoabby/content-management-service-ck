@@ -60,24 +60,24 @@ Se implementarán pruebas unitarias y de integración para garantizar la funcion
 
 ### Funcionalidades de **PUT**
 
-- [ ] **Modificar el nombre de una sección**
+- [x] **Modificar el nombre de una sección**
   - Endpoint: `PUT /sections/{sectionId}`
   - **Tareas**:
-    - [ ] Implementar la lógica para actualizar el nombre de una sección.
-    - [ ] Lógica para cambiar el nombre de una pagina
-    - [ ] Lógica para modificar y guardar el contenido de una pagina
+    - [x] Implementar la lógica para actualizar el nombre de una sección.
+    - [x] Lógica para cambiar el nombre de una pagina
+    - [x] Lógica para modificar y guardar el contenido de una pagina
 
 ### Funcionalidades de **DELETE**
 
-- [ ] **Eliminar una sección y todas sus páginas**
+- [x] **Eliminar una sección y todas sus páginas**
   - Endpoint: `DELETE /sections/{sectionId}`
   - **Tareas**:
-    - [ ] Implementar la lógica para eliminar una sección y sus páginas.
+    - [x] Implementar la lógica para eliminar una sección y sus páginas.
 
-- [ ] **Eliminar una página específica**
+- [x] **Eliminar una página específica**
   - Endpoint: `DELETE /sections/{sectionId}/pages/{pageId}`
   - **Tareas**:
-    - [ ] Implementar la lógica para eliminar una página específica.
+    - [x] Implementar la lógica para eliminar una página específica.
 
 ## Lo necesario y faltante
 

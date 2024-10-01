@@ -28,5 +28,4 @@ func (c *CreateNewSectionPage) Execute(context context.Context, params dto.Creat
 		},
 	})
 	errorhandler.Handle(errorCreating, c, "error creating section", "usecase.create_section")
-
 }

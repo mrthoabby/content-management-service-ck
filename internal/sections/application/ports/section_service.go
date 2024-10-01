@@ -8,6 +8,7 @@ import (
 	coredomain "github.com/mrthoabby/content-management-service-ck/pkg/commons/domain"
 )
 
+// TODO: Asegurase que aquí solo sean DTOs
 type SectionService interface {
 	GetSectionByID(context.Context, types.GetSectionByIDParams) dto.ResponseSectionDTO
 	GetAllSections(context.Context, types.GetAllSectionsParams) coredomain.PaginatedResult[[]dto.ResponseSectionDTO]
@@ -18,10 +19,9 @@ type SectionService interface {
 	CreateSection(context.Context, dto.CreateSectionRequestDTO)
 	CreateSectionPage(context.Context, dto.CreateSectionPageRequestDTO)
 
-	// UpdateSectionPageContent(models.SectionPageIDContent)
-	// UpdateSectionPageName(models.SectionPageIDPageName)
-	// UpdateSectionName(models.SectionPageIDName)
+	UpdateSection(context.Context, dto.SectionToUpdateDTO)
+	UpdateSectionPage(context.Context, dto.SectionPageToUpdateDTO)
 
-	// DeleteSectionPageByID(models.PageID)
-	// DeleteSectionByID(models.SectionID)
+	DeleteSectionPageByID(context.Context, dto.SectionIDPageIDDTO)
+	DeleteSectionByID(context.Context, dto.SectionIDDTO)
 }

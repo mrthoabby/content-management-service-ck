@@ -20,10 +20,12 @@ const (
 	sectionIdProperty   = "id"
 	sectionNameProperty = "name"
 
-	pagesProperty       = "pages"
-	pageIdProperty      = "pages.id"
-	pageNameProperty    = "pages.name"
-	pageContentProperty = "pages.content"
+	pagesProperty               = "pages"
+	pageIdProperty              = "pages.id"
+	pageNameProperty            = "pages.name"
+	pageListNameProperty        = "pages.$.name"
+	pageContentProperty         = "pages.content"
+	PageListContentDataProperty = "pages.$.content"
 )
 
 var env struct {
@@ -395,22 +397,117 @@ func (s *SectionProvider) CreateSectionPageAsync(context context.Context, model 
 	return nil
 }
 
-func (s *SectionProvider) UpdateSectionPageContentAsync(_ context.Context, _ models.SectionPageIDContent) error {
-	panic("not implemented") // TODO: Implement
+func (s *SectionProvider) UpdateSectionAsync(context context.Context, model models.SectionIDName) error {
+	changes := 0
+
+	filter := bson.M{
+		sectionIdProperty: model.SectionID,
+	}
+	update := bson.M{}
+
+	if model.SectionName != "" {
+		changes++
+		update[sectionNameProperty] = model.SectionName
+	}
+
+	if changes > 0 {
+		updateResult, errorUpdating := s.Collection.UpdateOne(context, filter, bson.M{
+			"$set": update,
+		})
+		if errorUpdating != nil {
+			if errorUpdating == mongo.ErrNoDocuments {
+				return errortypes.NewNotFoundError("Section not found")
+			}
+			return errorUpdating
+		}
+
+		if updateResult.MatchedCount == 0 {
+			return errortypes.NewNotFoundError("Section not found")
+		}
+	}
+
+	return nil
+
 }
 
-func (s *SectionProvider) UpdateSectionPageNameAsync(_ context.Context, _ models.SectionPageIDPageName) error {
-	panic("not implemented") // TODO: Implement
+func (s *SectionProvider) UpdateSectionPageAsync(context context.Context, model models.SectionIDPageIDContent) error {
+	changes := 0
+
+	filter := bson.M{
+		sectionIdProperty: model.SectionID,
+		pageIdProperty:    model.PageID,
+	}
+
+	update := bson.M{}
+
+	if model.Content.Data != "" {
+		changes++
+		update[PageListContentDataProperty] = bson.M{
+			"data": model.Content.Data,
+		}
+	}
+
+	if model.PageName != "" {
+		changes++
+		update[pageListNameProperty] = model.PageName
+	}
+
+	if changes > 0 {
+
+		updateResult, errorUpdating := s.Collection.UpdateOne(context, filter, bson.M{
+			"$set": update,
+		})
+		if errorUpdating != nil {
+			if errorUpdating == mongo.ErrNoDocuments {
+				return errortypes.NewNotFoundError("Section not found")
+			}
+			return errorUpdating
+		}
+
+		if updateResult.MatchedCount == 0 {
+			return errortypes.NewNotFoundError("Page not found")
+		}
+	}
+
+	return nil
 }
 
-func (s *SectionProvider) UpdateSectionNameAsync(_ context.Context, _ models.SectionPageIDName) error {
-	panic("not implemented") // TODO: Implement
+func (s *SectionProvider) DeleteSectionPageByIDAsync(context context.Context, model models.SectionPageID) error {
+	update := bson.M{
+		"$pull": bson.M{
+			pagesProperty: bson.M{
+				"id": model.PageID,
+			},
+		},
+	}
+
+	result, errorUpdating := s.Collection.UpdateOne(context, bson.M{
+		sectionIdProperty: model.SectionID,
+	}, update)
+
+	if errorUpdating != nil {
+		return errorUpdating
+	}
+
+	if result.MatchedCount == 0 {
+		return errortypes.NewNotFoundError("Page not found")
+	}
+
+	return nil
 }
 
-func (s *SectionProvider) DeleteSectionPageByIDAsync(_ context.Context, _ models.PageID) error {
-	panic("not implemented") // TODO: Implement
-}
+func (s *SectionProvider) DeleteSectionByIDAsync(context context.Context, sectionID models.SectionID) error {
+	deleteResult, errorDeleting := s.Collection.DeleteOne(context, bson.M{
+		sectionIdProperty: sectionID,
+	})
 
-func (s *SectionProvider) DeleteSectionByIDAsync(_ context.Context, _ models.SectionID) error {
-	panic("not implemented") // TODO: Implement
+	if errorDeleting != nil {
+		return errorDeleting
+	}
+
+	if deleteResult.DeletedCount == 0 {
+		return errortypes.NewNotFoundError("Section not found")
+	}
+
+	return nil
 }

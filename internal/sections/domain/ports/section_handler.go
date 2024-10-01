@@ -13,10 +13,9 @@ type SectionHandler interface {
 	CreateSection(http.ResponseWriter, *http.Request)
 	CreateSectionPage(http.ResponseWriter, *http.Request)
 
-	// UpdateSectionPageContent(http.ResponseWriter, *http.Request)
-	// UpdateSectionPageName(http.ResponseWriter, *http.Request)
-	// UpdateSectionName(http.ResponseWriter, *http.Request)
+	UpdateSection(http.ResponseWriter, *http.Request)
+	UpdateSectionPage(http.ResponseWriter, *http.Request)
 
-	// DeleteSectionPageByID(http.ResponseWriter, *http.Request)
-	// DeleteSectionByID(http.ResponseWriter, *http.Request)
+	DeleteSectionPageByID(http.ResponseWriter, *http.Request)
+	DeleteSectionByID(http.ResponseWriter, *http.Request)
 }

@@ -22,14 +22,21 @@ func (r *SectionRouter) InitialiceSectionRouter(middlewares ...*mux.MiddlewareFu
 	}
 
 	mainPath := r.PathPrefix(v1.APIMainPath).Subrouter()
+	fullPathSectionsPage := fmt.Sprintf("/{%s}/pages/{%s}", v1.SectionIDParam, v1.PageIDParam)
 
 	mainPath.HandleFunc(fmt.Sprintf("/{%s}", v1.SectionIDParam), r.GetSectionByID).Methods(http.MethodGet)
 	mainPath.HandleFunc("", r.GetAllSections).Methods(http.MethodGet)
-	mainPath.HandleFunc(fmt.Sprintf("/{%s}/pages/{%s}", v1.SectionIDParam, v1.PageIDParam), r.GetPageContentByPageID).Methods(http.MethodGet)
+	mainPath.HandleFunc(fullPathSectionsPage, r.GetPageContentByPageID).Methods(http.MethodGet)
 	mainPath.HandleFunc("/search", r.GetSectionsByQuery).Methods(http.MethodGet)
 
 	mainPath.HandleFunc("", r.CreateSection).Methods(http.MethodPost)
 	mainPath.HandleFunc(fmt.Sprintf("/{%s}/pages", v1.SectionIDParam), r.CreateSectionPage).Methods(http.MethodPost)
+
+	mainPath.HandleFunc(fmt.Sprintf("/{%s}", v1.SectionIDParam), r.UpdateSection).Methods(http.MethodPut)
+	mainPath.HandleFunc(fullPathSectionsPage, r.UpdateSectionPage).Methods(http.MethodPut)
+
+	mainPath.HandleFunc(fullPathSectionsPage, r.DeleteSectionPageByID).Methods(http.MethodDelete)
+	mainPath.HandleFunc(fmt.Sprintf("/{%s}", v1.SectionIDParam), r.DeleteSectionByID).Methods(http.MethodDelete)
 
 }
 
