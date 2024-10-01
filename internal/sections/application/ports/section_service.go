@@ -16,7 +16,7 @@ type SectionService interface {
 	GetSectionsByQuery(context.Context, types.GetSectionsByQuery) []dto.ResponseSectionDTO
 
 	CreateSection(context.Context, dto.CreateSectionRequestDTO)
-	// CreateSectionPage(models.PageIDName)
+	CreateSectionPage(context.Context, dto.CreateSectionPageRequestDTO)
 
 	// UpdateSectionPageContent(models.SectionPageIDContent)
 	// UpdateSectionPageName(models.SectionPageIDPageName)

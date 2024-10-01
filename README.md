@@ -52,11 +52,11 @@ Se implementarán pruebas unitarias y de integración para garantizar la funcion
   - **Tareas**:
     - [x] Implementar la lógica para crear una sección.
 
-- [ ] **Crear una nueva página dentro de una sección**
+- [x] **Crear una nueva página dentro de una sección**
   - Endpoint: `POST /sections/{sectionId}/pages`
   - **Tareas**:
-    - [ ] Implementar la lógica para crear una página en una sección existente.
-    - [ ] Lógica para modificar y guardar el contenido de una pagina
+    - [x] Implementar la lógica para crear una página en una sección existente.
+
 
 ### Funcionalidades de **PUT**
 
@@ -65,6 +65,7 @@ Se implementarán pruebas unitarias y de integración para garantizar la funcion
   - **Tareas**:
     - [ ] Implementar la lógica para actualizar el nombre de una sección.
     - [ ] Lógica para cambiar el nombre de una pagina
+    - [ ] Lógica para modificar y guardar el contenido de una pagina
 
 ### Funcionalidades de **DELETE**
 

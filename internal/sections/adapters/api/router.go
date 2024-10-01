@@ -29,6 +29,7 @@ func (r *SectionRouter) InitialiceSectionRouter(middlewares ...*mux.MiddlewareFu
 	mainPath.HandleFunc("/search", r.GetSectionsByQuery).Methods(http.MethodGet)
 
 	mainPath.HandleFunc("", r.CreateSection).Methods(http.MethodPost)
+	mainPath.HandleFunc(fmt.Sprintf("/{%s}/pages", v1.SectionIDParam), r.CreateSectionPage).Methods(http.MethodPost)
 
 }
 

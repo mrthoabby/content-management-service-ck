@@ -60,3 +60,7 @@ func (s Service) GetSectionsByQuery(context context.Context, params types.GetSec
 func (s Service) CreateSection(context context.Context, dto dto.CreateSectionRequestDTO) {
 	s.CreateNewSection.Execute(context, dto)
 }
+
+func (s Service) CreateSectionPage(context context.Context, dto dto.CreateSectionPageRequestDTO) {
+	s.CreateNewSectionPage.Execute(context, dto)
+}

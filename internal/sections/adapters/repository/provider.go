@@ -20,6 +20,7 @@ const (
 	sectionIdProperty   = "id"
 	sectionNameProperty = "name"
 
+	pagesProperty       = "pages"
 	pageIdProperty      = "pages.id"
 	pageNameProperty    = "pages.name"
 	pageContentProperty = "pages.content"
@@ -354,8 +355,44 @@ func (s *SectionProvider) CreateSectionAsync(context context.Context, model mode
 	return nil
 }
 
-func (s *SectionProvider) CreateSectionPageAsync(_ context.Context, _ models.PageIDName) error {
-	panic("not implemented") // TODO: Implement
+func (s *SectionProvider) CreateSectionPageAsync(context context.Context, model models.SectionPageIDPageName) error {
+	filter := bson.M{
+		sectionIdProperty: model.SectionID,
+		pageIdProperty:    model.NetPageID.ID,
+	}
+
+	pageExistResult, errorFinding := s.Collection.CountDocuments(context, filter)
+	if errorFinding != nil {
+		return errorFinding
+	}
+
+	if pageExistResult > 0 {
+		return errortypes.NewConflictError("Page already exists in section")
+	}
+
+	filter = bson.M{
+		sectionIdProperty: model.SectionID,
+	}
+
+	update := bson.M{
+		"$push": bson.M{
+			pagesProperty: models.Page{
+				ID:   model.NetPageID.ID,
+				Name: model.NetPageID.Name,
+			},
+		},
+	}
+
+	updateResult, errorUpdating := s.Collection.UpdateOne(context, filter, update)
+	if errorUpdating != nil {
+		return errorUpdating
+	}
+
+	if updateResult.MatchedCount == 0 {
+		return errortypes.NewNotFoundError("Section not found")
+	}
+
+	return nil
 }
 
 func (s *SectionProvider) UpdateSectionPageContentAsync(_ context.Context, _ models.SectionPageIDContent) error {

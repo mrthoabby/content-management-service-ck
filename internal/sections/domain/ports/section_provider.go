@@ -20,7 +20,7 @@ type SectionProvider interface {
 	FetchPageContentByPageIDAsync(context.Context, models.SectionPageID) (*models.SectionPageIDContent, error)
 
 	CreateSectionAsync(context.Context, models.SectionIDName) error
-	CreateSectionPageAsync(context.Context, models.PageIDName) error
+	CreateSectionPageAsync(context.Context, models.SectionPageIDPageName) error
 
 	UpdateSectionPageContentAsync(context.Context, models.SectionPageIDContent) error
 	UpdateSectionPageNameAsync(context.Context, models.SectionPageIDPageName) error

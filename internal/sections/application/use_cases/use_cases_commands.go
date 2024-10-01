@@ -16,4 +16,5 @@ type UseCasesCommands struct {
 	GetPageContentByID   ports.UseCaseWithParamAndReturn[types.GetPageContentParams, models.SectionPageIDContent]
 	GetSectionsWithQuery ports.UseCaseWithParamAndReturn[types.GetSectionsByQuery, []models.Section]
 	CreateNewSection     ports.UseCaseWithParam[dto.CreateSectionRequestDTO]
+	CreateNewSectionPage ports.UseCaseWithParam[dto.CreateSectionPageRequestDTO]
 }
