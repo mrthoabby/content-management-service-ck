@@ -17,4 +17,8 @@ type UseCasesCommands struct {
 	GetSectionsWithQuery ports.UseCaseWithParamAndReturn[types.GetSectionsByQuery, []models.Section]
 	CreateNewSection     ports.UseCaseWithParam[dto.CreateSectionRequestDTO]
 	CreateNewSectionPage ports.UseCaseWithParam[dto.CreateSectionPageRequestDTO]
+	UpdateASection       ports.UseCaseWithParam[dto.SectionToUpdateDTO]
+	UpdateASectionPage   ports.UseCaseWithParam[dto.SectionPageToUpdateDTO]
+	DeleteASectionPage   ports.UseCaseWithParam[dto.SectionIDPageIDDTO]
+	DeleteASection       ports.UseCaseWithParam[dto.SectionIDDTO]
 }

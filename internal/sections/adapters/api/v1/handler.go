@@ -150,3 +150,45 @@ func (s SectionController) CreateSectionPage(responseWriter http.ResponseWriter,
 	responseWriter.Header().Set("Location", fmt.Sprintf("%s/%s/pages/%s", APIMainPath, sectionID, pageDTO.PageID))
 	responseWriter.WriteHeader(http.StatusCreated)
 }
+
+func (s SectionController) UpdateSection(responseWriter http.ResponseWriter, request *http.Request) {
+	sectionID := validate.IsNotEmptyString(mux.Vars(request)[SectionIDParam], fmt.Sprintf(paramsRequiredMessage, SectionIDParam))
+	dataToUpdate, errorBuilding := dto.BuildSectionToUpdateDTO(request.Body, sectionID)
+	errorhandler.Handle(errorBuilding, s, "error building section dto", "handler: UpdateSection")
+
+	validate.IsAValidStructure(dataToUpdate, "section")
+
+	s.sectionService.UpdateSection(request.Context(), *dataToUpdate)
+
+	responseWriter.WriteHeader(http.StatusNoContent)
+}
+
+func (s SectionController) UpdateSectionPage(responseWriter http.ResponseWriter, request *http.Request) {
+	sectionID := validate.IsNotEmptyString(mux.Vars(request)[SectionIDParam], fmt.Sprintf(paramsRequiredMessage, SectionIDParam))
+	pageID := validate.IsNotEmptyString(mux.Vars(request)[PageIDParam], fmt.Sprintf(paramsRequiredMessage, PageIDParam))
+	dataToUpdate, errorBuilding := dto.BuildSectionPageToUpdateDTO(request.Body, sectionID, pageID)
+	errorhandler.Handle(errorBuilding, s, "error building page dto", "handler: UpdateSectionPage")
+
+	validate.IsAValidStructure(dataToUpdate, "page")
+
+	s.sectionService.UpdateSectionPage(request.Context(), *dataToUpdate)
+
+	responseWriter.WriteHeader(http.StatusNoContent)
+}
+
+func (s SectionController) DeleteSectionPageByID(responseWriter http.ResponseWriter, request *http.Request) {
+	sectionID := validate.IsNotEmptyString(mux.Vars(request)[SectionIDParam], fmt.Sprintf(paramsRequiredMessage, SectionIDParam))
+	pageID := validate.IsNotEmptyString(mux.Vars(request)[PageIDParam], fmt.Sprintf(paramsRequiredMessage, PageIDParam))
+
+	s.sectionService.DeleteSectionPageByID(request.Context(), *dto.NewSectionIDPageIDDTO(sectionID, pageID))
+
+	responseWriter.WriteHeader(http.StatusNoContent)
+}
+
+func (s SectionController) DeleteSectionByID(responseWriter http.ResponseWriter, request *http.Request) {
+	sectionID := validate.IsNotEmptyString(mux.Vars(request)[SectionIDParam], fmt.Sprintf(paramsRequiredMessage, SectionIDParam))
+
+	s.sectionService.DeleteSectionByID(request.Context(), *dto.NewSectionIDDTO(sectionID))
+
+	responseWriter.WriteHeader(http.StatusNoContent)
+}

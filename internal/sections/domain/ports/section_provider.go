@@ -22,10 +22,9 @@ type SectionProvider interface {
 	CreateSectionAsync(context.Context, models.SectionIDName) error
 	CreateSectionPageAsync(context.Context, models.SectionPageIDPageName) error
 
-	UpdateSectionPageContentAsync(context.Context, models.SectionPageIDContent) error
-	UpdateSectionPageNameAsync(context.Context, models.SectionPageIDPageName) error
-	UpdateSectionNameAsync(context.Context, models.SectionPageIDName) error
+	UpdateSectionAsync(context.Context, models.SectionIDName) error
+	UpdateSectionPageAsync(context.Context, models.SectionIDPageIDContent) error
 
-	DeleteSectionPageByIDAsync(context.Context, models.PageID) error
+	DeleteSectionPageByIDAsync(context.Context, models.SectionPageID) error
 	DeleteSectionByIDAsync(context.Context, models.SectionID) error
 }

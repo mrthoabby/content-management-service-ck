@@ -64,3 +64,19 @@ func (s Service) CreateSection(context context.Context, dto dto.CreateSectionReq
 func (s Service) CreateSectionPage(context context.Context, dto dto.CreateSectionPageRequestDTO) {
 	s.CreateNewSectionPage.Execute(context, dto)
 }
+
+func (s Service) UpdateSection(context context.Context, dto dto.SectionToUpdateDTO) {
+	s.UpdateASection.Execute(context, dto)
+}
+
+func (s Service) UpdateSectionPage(context context.Context, dto dto.SectionPageToUpdateDTO) {
+	s.UpdateASectionPage.Execute(context, dto)
+}
+
+func (s Service) DeleteSectionPageByID(context context.Context, dto dto.SectionIDPageIDDTO) {
+	s.DeleteASectionPage.Execute(context, dto)
+}
+
+func (s Service) DeleteSectionByID(context context.Context, dto dto.SectionIDDTO) {
+	s.DeleteASection.Execute(context, dto)
+}
